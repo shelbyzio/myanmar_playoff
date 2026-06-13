@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MNL Play-off</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0298f5; border-radius: 10px; }
+        
+        #floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background-color: white;
+            border: 3px solid #003399;
+            border-radius: 50%;
+            cursor: move;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 51, 153, 0.4);
+            touch-action: none;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+        #floating-btn:active { transform: scale(0.9); }
+        #floating-btn img { width: 45px; height: 45px; object-fit: contain; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-[#003399] border-b-4 border-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-3 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-1 rounded-lg h-10 w-10 overflow-hidden flex items-center justify-center">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKDqLfPOsbfcS0vYPM9vCJd-w6RPnP9YDMrQ&s" alt="MNL" class="h-full w-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-sm font-black text-white">Myanmar National League</h1>
+                    <p class="text-[9px] text-blue-200 font-bold uppercase tracking-widest">Play-Off Stage</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-3 py-6 flex-1 w-full">
+        <div class="bg-white border-l-4 border-[#003399] p-4 rounded-r-xl shadow-sm mb-6">
+            <h2 class="text-lg font-black text-slate-800">Play-Off</h2>
+            <p class="text-xs text-slate-500">Winner advances to the Final</p>
+        </div>
+
+        <div id="fixtures-grid" class="grid grid-cols-1 gap-4"></div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <a href="https://shelbyzio.github.io/MyanmarSuperCup/" id="floating-btn">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKDqLfPOsbfcS0vYPM9vCJd-w6RPnP9YDMrQ&s" alt="LaLiga">
+    </a>
+
+    <script>
+        const TEAMS = {
+            RKH: { name: "Rakhine United", logo: "https://upload.wikimedia.org/wikipedia/en/e/e2/Rakhine_United_Football_Club.jpg", tg: "https://t.me/kenzjust" },
+            HTU: { name: "Hantharwady United", logo: "https://upload.wikimedia.org/wikipedia/en/6/66/HANTHARWADY-UTD-FC-143x156.jpg", tg: "https://t.me/Fyhjfj_8046206" },
+            YMU: { name: "Yarmanya United", logo: "https://tmssl.akamaized.net//images/wappen/head/125345.png?lm=1734537118", tg: "https://t.me/Xuman88" },
+            SHN: { name: "Shan United", logo: "https://upload.wikimedia.org/wikipedia/en/4/4a/Shan_United_Crest_2015.png", tg: "https://t.me/Alinn145678" }
+        };
+
+        const MATCHES = [
+            { home: "RKH", away: "HTU" },
+            { home: "YMU", away: "SHN" }
+        ];
+
+        const container = document.getElementById('fixtures-grid');
+        MATCHES.forEach(m => {
+            const h = TEAMS[m.home];
+            const a = TEAMS[m.away];
+            const card = document.createElement('div');
+            card.className = "bg-white border border-slate-100 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-[#003399]/20 transition-all";
+            card.innerHTML = `
+                <a href="${h.tg}" target="_blank" class="flex flex-col items-center gap-2 w-[40%]">
+                    <img src="${h.logo}" class="w-12 h-12 object-contain rounded-full shadow-sm">
+                    <span class="text-xs font-bold text-center">${h.name}</span>
+                </a>
+                <div class="text-[#003399] font-black text-xl">VS</div>
+                <a href="${a.tg}" target="_blank" class="flex flex-col items-center gap-2 w-[40%]">
+                    <img src="${a.logo}" class="w-12 h-12 object-contain rounded-full shadow-sm">
+                    <span class="text-xs font-bold text-center">${a.name}</span>
+                </a>
+            `;
+            container.appendChild(card);
+        });
+
+        // Draggable Functionality
+        const btn = document.getElementById('floating-btn');
+        let isDragging = false;
+        
+        btn.addEventListener('mousedown', (e) => { isDragging = true; });
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            btn.style.left = (e.clientX - 32) + 'px';
+            btn.style.top = (e.clientY - 32) + 'px';
+            btn.style.right = 'auto';
+            btn.style.bottom = 'auto';
+        });
+        document.addEventListener('mouseup', () => { isDragging = false; });
+        
+        // Touch support
+        btn.addEventListener('touchstart', (e) => { isDragging = true; });
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            btn.style.left = (e.touches[0].clientX - 32) + 'px';
+            btn.style.top = (e.touches[0].clientY - 32) + 'px';
+            btn.style.right = 'auto';
+            btn.style.bottom = 'auto';
+        });
+        document.addEventListener('touchend', () => { isDragging = false; });
+    </script>
+</body>
+</html>
